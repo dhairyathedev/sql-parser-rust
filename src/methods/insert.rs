@@ -1,5 +1,9 @@
 use nom::{
-    bytes::complete::{is_not, tag, take_while1}, character::complete::{multispace0, multispace1}, multi::separated_list0, sequence::{delimited, preceded}, IResult
+    bytes::complete::{is_not, tag, take_while1},
+    character::complete::{multispace0, multispace1},
+    multi::separated_list0,
+    sequence::{delimited, preceded},
+    IResult,
 };
 
 fn is_valid_identifier_char(c: char) -> bool {
@@ -14,7 +18,7 @@ fn get_cols(input: &str) -> IResult<&str, Vec<&str>> {
     delimited(
         tag("("),
         separated_list0(preceded(multispace0, tag(",")), identifier),
-        tag(")")
+        tag(")"),
     )(input)
 }
 
@@ -23,9 +27,11 @@ fn parse_value(input: &str) -> IResult<&str, &str> {
 }
 
 fn parse_values(input: &str) -> IResult<&str, Vec<&str>> {
-    delimited(tag("("), 
-        separated_list0(preceded(multispace0, tag(",")), parse_value)
-    , tag(")"))(input)
+    delimited(
+        tag("("),
+        separated_list0(preceded(multispace0, tag(",")), parse_value),
+        tag(")"),
+    )(input)
 }
 
 pub fn parse_insert(input: &str) -> IResult<&str, (&str, Vec<&str>, Vec<&str>)> {
